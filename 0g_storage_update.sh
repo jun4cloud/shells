@@ -1,5 +1,8 @@
 #!/bin/bash
 
+apt update
+apt install -y libssl-dev pkg-config 
+
 # Stop the zgs service
 sudo systemctl stop zgs
 
@@ -26,6 +29,9 @@ cargo build --release
 
 # Restore the config file
 cp $HOME/0g/0g-storage-node/run/config.toml.backup $HOME/0g/0g-storage-node/run/config.toml
+
+sed -i 's/^blockchain_rpc_endpoint =.*$/blockchain_rpc_endpoint = "https:\/\/16600\.rpc\.thirdweb\.com"/' $HOME/0g/0g-storage-node/run/config.toml
+sed -i '8c ExecStart=/root/0g/0g-storage-node/target/release/zgs_node --config /root/0g/0g-storage-node/run/config.toml ' /etc/systemd/system/zgs.service
 
 # Reload the systemd manager configuration
 sudo systemctl daemon-reload
