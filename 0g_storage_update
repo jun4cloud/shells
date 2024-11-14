@@ -4,10 +4,10 @@
 sudo systemctl stop zgs
 
 # Backup the current config file
-cp $HOME/0g-storage-node/run/config.toml $HOME/0g-storage-node/run/config.toml.backup
+cp $HOME/0g/0g-storage-node/run/config.toml $HOME/0g/0g-storage-node/run/config.toml.backup
 
 # Navigate to the project directory
-cd $HOME/0g-storage-node
+cd $HOME/0g/0g-storage-node
 
 # Stash any local changes
 git stash
@@ -25,7 +25,7 @@ git submodule update --init
 cargo build --release
 
 # Restore the config file
-cp $HOME/0g-storage-node/run/config.toml.backup $HOME/0g-storage-node/run/config.toml
+cp $HOME/0g/0g-storage-node/run/config.toml.backup $HOME/0g/0g-storage-node/run/config.toml
 
 # Reload the systemd manager configuration
 sudo systemctl daemon-reload
