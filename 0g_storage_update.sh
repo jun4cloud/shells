@@ -28,6 +28,8 @@ cargo build --release
 # Restore the config file
 cp $zgs_home/0g-storage-node/run/config.toml.backup $zgs_home/0g-storage-node/run/config.toml
 
+sed -i 's/^blockchain_rpc_endpoint =.*$/blockchain_rpc_endpoint = "https:\/\/rpc\.ankr\.com\/0g_newton"/' $zgs_home/0g-storage-node/run/config.toml
+
 # Reload the systemd manager configuration
 sudo systemctl daemon-reload
 
