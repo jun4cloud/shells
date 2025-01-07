@@ -1,16 +1,14 @@
 #!/bin/bash
 
-apt update
-apt install -y libssl-dev pkg-config 
-
+zgs_home="0g/"
 # Stop the zgs service
 sudo systemctl stop zgs
 
 # Backup the current config file
-cp $HOME/0g/0g-storage-node/run/config.toml $HOME/0g/0g-storage-node/run/config.toml.backup
+cp $zgs_home/0g-storage-node/run/config.toml $zgs_home/0g-storage-node/run/config.toml.backup
 
 # Navigate to the project directory
-cd $HOME/0g/0g-storage-node
+cd $zgs_home/0g-storage-node
 
 # Stash any local changes
 git stash
@@ -19,7 +17,7 @@ git stash
 git fetch --all --tags
 
 # Checkout the specific commit
-git checkout 4b48d25
+git checkout 40d4355
 
 # Update submodules
 git submodule update --init
@@ -28,10 +26,7 @@ git submodule update --init
 cargo build --release
 
 # Restore the config file
-cp $HOME/0g/0g-storage-node/run/config.toml.backup $HOME/0g/0g-storage-node/run/config.toml
-
-sed -i 's/^blockchain_rpc_endpoint =.*$/blockchain_rpc_endpoint = "https:\/\/16600\.rpc\.thirdweb\.com"/' $HOME/0g/0g-storage-node/run/config.toml
-sed -i '8c ExecStart=/root/0g/0g-storage-node/target/release/zgs_node --config /root/0g/0g-storage-node/run/config.toml ' /etc/systemd/system/zgs.service
+cp $zgs_home/0g-storage-node/run/config.toml.backup $zgs_home/0g-storage-node/run/config.toml
 
 # Reload the systemd manager configuration
 sudo systemctl daemon-reload
@@ -41,10 +36,4 @@ sudo systemctl enable zgs
 sudo systemctl start zgs
 
 # Monitor the service status
-while true; do
-    response=$(curl -s -X POST http://localhost:5678 -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"zgs_getStatus","params":[],"id":1}')
-    logSyncHeight=$(echo $response | jq '.result.logSyncHeight')
-    connectedPeers=$(echo $response | jq '.result.connectedPeers')
-    echo -e "logSyncHeight: \033[32m$logSyncHeight\033[0m, connectedPeers: \033[34m$connectedPeers\033[0m"
-    sleep 5
-done
+tail -f $zgs_home/0g-storage-node/run/log/zgs.log.$(TZ=UTC date +%Y-%m-%d)
