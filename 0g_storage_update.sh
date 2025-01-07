@@ -1,6 +1,6 @@
 #!/bin/bash
 
-zgs_home="0g/"
+zgs_home="~/0g"
 # Stop the zgs service
 sudo systemctl stop zgs
 
